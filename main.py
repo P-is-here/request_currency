@@ -14,7 +14,7 @@ def index():
 
 
 def get_privat_valute():
-    r = session.get('https://privatbank.ua/rates-archive')
+    r = session.get('https://privatbank.ua/rates-archive', proxies={'http':'','https':''})
     r = r.html.find('.currency-pairs')[0:3]
     
     for i, value in enumerate(r):
