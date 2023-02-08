@@ -20,8 +20,6 @@ def get_privat_valute():
     for i, value in enumerate(r):
        r[i] = value.text
     
-    print(r)
-
     for el in r:
         name = el[0:3]
         buy = ""
@@ -36,7 +34,7 @@ def get_privat_valute():
                 else:
                     sell += symbol
             elif mode == 1:
-                    print("check")
+                    
                     mode = 2
         
         list_of_currencys.append(Currency(name, buy, sell))
