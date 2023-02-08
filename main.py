@@ -1,10 +1,8 @@
-#from requests_html import HTMLSession
 from flask import Flask, render_template
 from urllib.request import urlopen
-import json
+from json import loads
 
 
-#session = HTMLSession()
 app = Flask(__name__)
 @app.route('/')
 
@@ -17,27 +15,21 @@ def index():
 
 
 def get_privat_valute():
-    #r = session.get('https://api.privatbank.ua/')
-    r = json.loads(urlopen("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5").read())
-    print(r)
-    #r = r.html.find("body")
-    #for i, value in enumerate(r):
-    #   r[i] = value.text
+    r = loads(urlopen("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5").read())
     
-    for el in range(3):
-        name = ""
-        buy = ""
-        sale = ""
+    for d in r:    
+        for key in d:
+            if key == "ccy":
+                name = d[key]
+                print(key, " ",d[key])
+            elif key == "buy":
+                buy = round(float(d[key]),2)
+                print(key, " ",d[key])
+            elif key == "sale":
+                sale = round(float(d[key]),2)
+                print(key, " ",d[key])
+
         list_of_currencys.append(Currency(name, buy, sale))
-        '''
-        for tag in el:
-            if tag == 'ccy':
-                name = el.get('ccy')
-            elif tag == 'buy':
-                buy = el.get('buy')
-            elif tag == 'sale':
-                sale = el.get('sale')
-        '''
 
 
 class Currency():
