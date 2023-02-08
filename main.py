@@ -1,7 +1,10 @@
-from requests_html import HTMLSession
+#from requests_html import HTMLSession
 from flask import Flask, render_template
+from urllib.request import urlopen
+import json
 
-session = HTMLSession()
+
+#session = HTMLSession()
 app = Flask(__name__)
 @app.route('/')
 
@@ -14,37 +17,34 @@ def index():
 
 
 def get_privat_valute():
-    r = session.get('https://privatbank.ua/rates-archive', proxies={'http':'','https':''})
-    r = r.html.find('.currency-pairs')[0:3]
+    #r = session.get('https://api.privatbank.ua/')
+    r = json.loads(urlopen("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5").read())
+    print(r)
+    #r = r.html.find("body")
+    #for i, value in enumerate(r):
+    #   r[i] = value.text
     
-    for i, value in enumerate(r):
-       r[i] = value.text
-    
-    for el in r:
-        name = el[0:3]
+    for el in range(3):
+        name = ""
         buy = ""
-        sell = ""
-        mode = 0
-
-        for symbol in el:
-            if symbol.isdigit() or symbol==".":
-                if mode in (0, 1):
-                    mode = 1
-                    buy += symbol
-                else:
-                    sell += symbol
-            elif mode == 1:
-                    
-                    mode = 2
-        
-        list_of_currencys.append(Currency(name, buy, sell))
+        sale = ""
+        list_of_currencys.append(Currency(name, buy, sale))
+        '''
+        for tag in el:
+            if tag == 'ccy':
+                name = el.get('ccy')
+            elif tag == 'buy':
+                buy = el.get('buy')
+            elif tag == 'sale':
+                sale = el.get('sale')
+        '''
 
 
 class Currency():
-    def __init__(self, name_of_currency, buy_price, sell_price):
+    def __init__(self, name_of_currency, buy_price, sale_price):
         self.name = name_of_currency
         self.buy = buy_price
-        self.sell = sell_price
+        self.sale = sale_price
 
 
 if __name__ == "__main__":
